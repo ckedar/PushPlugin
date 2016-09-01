@@ -1,25 +1,31 @@
 package com.plugin.gcm;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-
 import com.google.android.gcm.GCMBaseIntentService;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 @SuppressLint("NewApi")
 public class GCMIntentService extends GCMBaseIntentService {
 
 	private static final String TAG = "GCMIntentService";
-	
+
 	public GCMIntentService() {
 		super("GCMIntentService");
 	}
@@ -63,6 +69,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 		Bundle extras = intent.getExtras();
 		if (extras != null)
 		{
+			sendDeliveryReport(context, intent);
+
 			// if we are in the foreground, just surface the payload, else post it to the statusbar
             if (PushPlugin.isInForeground()) {
 				extras.putBoolean("foreground", true);
@@ -151,4 +159,66 @@ public class GCMIntentService extends GCMBaseIntentService {
 		Log.e(TAG, "onError - errorId: " + errorId);
 	}
 
+	private static void sendDeliveryReport(Context context, Intent intent) {
+		Bundle extras = intent.getExtras();
+		if (extras != null) {
+			final String messageId = extras.getString("google.message_id");
+			final String deliveryReportURL = extras.getString("delivery_report_url");
+			if(deliveryReportURL == null) return;
+			String uuid = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+			String versionCode = null;
+			try {
+				versionCode = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+			} catch (PackageManager.NameNotFoundException e) {
+				e.printStackTrace();
+			}
+
+			final Uri uri = Uri.parse(deliveryReportURL).buildUpon()
+					.appendQueryParameter("status", "received")
+					.appendQueryParameter("messageId", messageId)
+					.appendQueryParameter("uuid", uuid)
+					.appendQueryParameter("version", versionCode)
+					.build();
+
+			(new CallAPI()).execute(uri.toString());
+		}
+	}
+
+	public static class CallAPI extends AsyncTask<String,String,String> {
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+		static String convertStreamToString(java.io.InputStream is) {
+			java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+			return s.hasNext() ? s.next() : "";
+		}
+		@Override
+		protected String doInBackground(String... params) {
+			try {
+				Thread.sleep((long) (10L*1000L*Math.random()));
+			} catch (InterruptedException e) {
+			}
+
+			String urlString = params[0]; // URL to call
+			String resultToDisplay = "";
+
+			InputStream in = null;
+			try {
+				URL url = new URL(urlString);
+				HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+				urlConnection.setRequestMethod("POST");
+				in = urlConnection.getInputStream();
+				resultToDisplay = convertStreamToString(in);
+				in.close();
+				urlConnection.disconnect();
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				return e.getMessage();
+			}
+
+			return resultToDisplay;
+		}
+
+	}
 }
