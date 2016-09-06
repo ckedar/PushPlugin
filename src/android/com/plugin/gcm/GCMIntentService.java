@@ -69,7 +69,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 		Bundle extras = intent.getExtras();
 		if (extras != null)
 		{
-			sendDeliveryReport(context, intent);
+			sendDeliveryReport(context, intent.getExtras(), "received");
 
 			// if we are in the foreground, just surface the payload, else post it to the statusbar
             if (PushPlugin.isInForeground()) {
@@ -159,8 +159,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 		Log.e(TAG, "onError - errorId: " + errorId);
 	}
 
-	private static void sendDeliveryReport(Context context, Intent intent) {
-		Bundle extras = intent.getExtras();
+	public static void sendDeliveryReport(Context context, Bundle extras, String status) {
 		if (extras != null) {
 			final String messageId = extras.getString("google.message_id");
 			final String deliveryReportURL = extras.getString("delivery_report_url");
@@ -174,7 +173,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			}
 
 			final Uri uri = Uri.parse(deliveryReportURL).buildUpon()
-					.appendQueryParameter("status", "received")
+					.appendQueryParameter("status", status)
 					.appendQueryParameter("messageId", messageId)
 					.appendQueryParameter("uuid", uuid)
 					.appendQueryParameter("version", versionCode)

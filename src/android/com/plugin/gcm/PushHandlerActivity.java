@@ -49,6 +49,7 @@ public class PushHandlerActivity extends Activity
             originalExtras.putBoolean("coldstart", !isPushPluginActive);
 
 			PushPlugin.sendExtras(originalExtras);
+			GCMIntentService.sendDeliveryReport(getApplicationContext(), originalExtras, "tapped");
 		}
 	}
 
