@@ -7,6 +7,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import com.google.android.gcm.GCMBaseIntentService;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -122,6 +125,18 @@ public class GCMIntentService extends GCMBaseIntentService {
 			mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
 		} else {
 			mBuilder.setContentText("<missing message content>");
+		}
+
+		String imageUrl = extras.getString("imageUrl");
+		if(imageUrl != null) {
+			NotificationCompat.BigPictureStyle notiStyle = new NotificationCompat.BigPictureStyle();
+			notiStyle.setSummaryText(message);
+			try {
+				Bitmap remote_picture = BitmapFactory.decodeStream((InputStream) new URL(imageUrl).getContent());
+				notiStyle.bigPicture(remote_picture);
+				mBuilder.setStyle(notiStyle);
+			} catch (IOException e) {
+			}
 		}
 
 		String msgcnt = extras.getString("msgcnt");
