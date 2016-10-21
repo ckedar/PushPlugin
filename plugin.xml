@@ -65,6 +65,12 @@
 		<source-file src="src/android/com/plugin/gcm/PushHandlerActivity.java" target-dir="src/com/plugin/gcm/" />
 		<source-file src="src/android/com/plugin/gcm/PushPlugin.java" target-dir="src/com/plugin/gcm/" />
 
+		<!--  drawable src/android/resources -->
+		<resource-file src="src/android/res/drawable-hdpi/notification_icon.png" target="res/drawable-hdpi/notification_icon.png" />
+		<resource-file src="src/android/res/drawable-mdpi/notification_icon.png" target="res/drawable-mdpi/notification_icon.png" />
+		<resource-file src="src/android/res/drawable-xhdpi/notification_icon.png" target="res/drawable-xhdpi/notification_icon.png" />
+		<resource-file src="src/android/res/drawable-xxhdpi/notification_icon.png" target="res/drawable-xxhdpi/notification_icon.png" />
+
 	</platform>
 
     <!-- amazon-fireos -->
