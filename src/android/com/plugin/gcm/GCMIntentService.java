@@ -113,13 +113,15 @@ public class GCMIntentService extends GCMBaseIntentService {
 		int uzedBgColor = 0xFF4B42;
 		NotificationCompat.Builder mBuilder =
 			new NotificationCompat.Builder(context)
-				.setDefaults(defaults)
-				.setSmallIcon(getNotificationIcon())
-				.setWhen(System.currentTimeMillis())
-				.setContentTitle(extras.getString("title"))
-				.setTicker(extras.getString("title"))
-				.setContentIntent(contentIntent)
-				.setAutoCancel(true);
+					.setDefaults(defaults)
+					.setSmallIcon(getNotificationIcon())
+//				.setLargeIcon(largeIcon)
+					.setWhen(System.currentTimeMillis())
+					.setContentTitle(extras.getString("title"))
+					.setTicker(extras.getString("title"))
+					.setContentIntent(contentIntent)
+					.setColor(uzedBgColor)
+					.setAutoCancel(true);
 
 		String message = extras.getString("message");
 		if (message != null) {
@@ -162,8 +164,8 @@ public class GCMIntentService extends GCMBaseIntentService {
 	}
 
 	private int getNotificationIcon() {
-		boolean useWhiteIcon = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP);
-		return useWhiteIcon ? R.drawable.notification_icon : R.drawable.icon;
+//		boolean useWhiteIcon = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP);
+		return R.drawable.notification_icon;
 	}
 
 	private static String getAppName(Context context)
