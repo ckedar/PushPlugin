@@ -18,6 +18,7 @@ import android.util.Log;
 import com.google.android.gcm.GCMBaseIntentService;
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.rapidue.uzed.R;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -108,11 +109,12 @@ public class GCMIntentService extends GCMBaseIntentService {
 				defaults = Integer.parseInt(extras.getString("defaults"));
 			} catch (NumberFormatException e) {}
 		}
-		
+
+		int uzedBgColor = 0xFF4B42;
 		NotificationCompat.Builder mBuilder =
 			new NotificationCompat.Builder(context)
 				.setDefaults(defaults)
-				.setSmallIcon(context.getApplicationInfo().icon)
+				.setSmallIcon(getNotificationIcon())
 				.setWhen(System.currentTimeMillis())
 				.setContentTitle(extras.getString("title"))
 				.setTicker(extras.getString("title"))
@@ -158,7 +160,12 @@ public class GCMIntentService extends GCMBaseIntentService {
 		
 		mNotificationManager.notify((String) appName, notId, mBuilder.build());
 	}
-	
+
+	private int getNotificationIcon() {
+		boolean useWhiteIcon = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP);
+		return useWhiteIcon ? R.drawable.notification_icon : R.drawable.icon;
+	}
+
 	private static String getAppName(Context context)
 	{
 		CharSequence appName = 
