@@ -110,7 +110,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			} catch (NumberFormatException e) {}
 		}
 
-		int uzedBgColor = 0xFF4B42;
+		int uzedBgColor = 0x142F54;
 		NotificationCompat.Builder mBuilder =
 			new NotificationCompat.Builder(context)
 					.setDefaults(defaults)
