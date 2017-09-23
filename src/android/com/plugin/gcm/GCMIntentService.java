@@ -82,11 +82,15 @@ public class GCMIntentService extends GCMBaseIntentService {
 			}
 			else {
 				extras.putBoolean("foreground", false);
-
-                // Send a notification if there is a message
-                if (extras.getString("message") != null && extras.getString("message").length() != 0) {
-                    createNotification(context, extras);
-                }
+				      /*Push notification to status bar if hotline notification*/
+				if(com.freshdesk.hotline.Hotline.isHotlineNotification(extras)){
+					com.freshdesk.hotline.Hotline.getInstance(context).handleGcmMessage(extras);
+					return;
+				}
+				// Send a notification if other than hotline and there is a message
+				if (extras.getString("message") != null && extras.getString("message").length() != 0) {
+					createNotification(context, extras);
+				}
             }
         }
 	}
